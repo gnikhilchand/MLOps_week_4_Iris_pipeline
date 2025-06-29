@@ -16,10 +16,14 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies & Run Tests
+      - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          npm install -g @dvcorg/cml
+          python src/train.py
+          python src/evaluate.py
+
+      - name: Run Tests and Save Results
+        run: |
           pytest > result.log || true
 
       - name: Show Test Output
@@ -27,14 +31,57 @@ jobs:
 
       - name: Generate Markdown Report
         run: |
-          echo "## 🧪 Iris Model Evaluation Report" > report.md
-          accuracy=$(python -c "from src.evaluate import calculate_accuracy; print(f'{calculate_accuracy():.2f}')")
-          echo "- Model Accuracy: $accuracy" >> report.md
-          echo "" >> report.md
-          echo "### 📋 Test Results" >> report.md
-          echo "```" >> report.md
-          cat result.log >> report.md
-          echo "```" >> report.md
+          echo "## 🧪 Iris Model Evaluation Report" > test-report.md
+          echo "" >> test-report.md
+          echo "### ✅ Test Results" >> test-report.md
+          echo "```" >> test-report.md
+          cat result.log >> test-report.md
+          echo "```" >> test-report.md
+          echo "" >> test-report.md
+          echo "Generated at: $(date)" >> test-report.md
 
-      - name: Post Report as PR Comment
-        run: cml send-comment report.md
+      - name: Archive Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: iris-test-report
+          path: test-report.md
+# name: Sanity Test
+
+# on:
+#   pull_request:
+#     branches: [main]
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.10'
+
+#       - name: Install Dependencies & Run Tests
+#         run: |
+#           pip install -r requirements.txt
+#           npm install -g @dvcorg/cml
+#           pytest > result.log || true
+
+#       - name: Show Test Output
+#         run: cat result.log
+
+      # - name: Generate Markdown Report
+      #   run: |
+      #     echo "## 🧪 Iris Model Evaluation Report" > report.md
+      #     accuracy=$(python -c "from src.evaluate import calculate_accuracy; print(f'{calculate_accuracy():.2f}')")
+      #     echo "- Model Accuracy: $accuracy" >> report.md
+      #     echo "" >> report.md
+      #     echo "### 📋 Test Results" >> report.md
+      #     echo "```" >> report.md
+      #     cat result.log >> report.md
+      #     echo "```" >> report.md
+
+      # - name: Post Report as PR Comment
+      #   run: cml send-comment report.md
