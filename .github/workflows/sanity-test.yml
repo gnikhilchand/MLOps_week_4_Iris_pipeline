@@ -8,43 +8,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: Install Dependencies
-        run: |
+      - run: |
           pip install -r requirements.txt
-          python src/train.py
-          python src/evaluate.py
-
-      - name: Run Tests and Save Results
-        run: |
           pytest > result.log || true
-
-      - name: Show Test Output
+      - name: Show test output
         run: cat result.log
-
-      - name: Generate Markdown Report
-        run: |
-          echo "## 🧪 Iris Model Evaluation Report" > test-report.md
-          echo "" >> test-report.md
-          echo "### ✅ Test Results" >> test-report.md
-          echo "```" >> test-report.md
-          cat result.log >> test-report.md
-          echo "```" >> test-report.md
-          echo "" >> test-report.md
-          echo "Generated at: $(date)" >> test-report.md
-
-      - name: Archive Report as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: iris-test-report
-          path: test-report.md
 # name: Sanity Test
 
 # on:
