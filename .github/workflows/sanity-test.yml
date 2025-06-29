@@ -19,6 +19,7 @@ jobs:
       - name: Install Dependencies & Run Tests
         run: |
           pip install -r requirements.txt
+          npm install -g @dvcorg/cml
           pytest > result.log || true
 
       - name: Show Test Output
