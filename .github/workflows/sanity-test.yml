@@ -23,3 +23,17 @@ jobs:
 
       - name: Show Test Output
         run: cat result.log
+
+      - name: Generate Markdown Report
+        run: |
+          echo "## 🧪 Iris Model Evaluation Report" > report.md
+          accuracy=$(python -c "from src.evaluate import calculate_accuracy; print(f'{calculate_accuracy():.2f}')")
+          echo "- Model Accuracy: $accuracy" >> report.md
+          echo "" >> report.md
+          echo "### 📋 Test Results" >> report.md
+          echo "```" >> report.md
+          cat result.log >> report.md
+          echo "```" >> report.md
+
+      - name: Post Report as PR Comment
+        run: cml send-comment report.md
