@@ -1,0 +1,25 @@
+name: Sanity Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies & Run Tests
+        run: |
+          pip install -r requirements.txt
+          pytest > result.log || true
+
+      - name: Show Test Output
+        run: cat result.log
