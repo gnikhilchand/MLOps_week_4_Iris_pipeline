@@ -41,7 +41,7 @@ jobs:
           echo "Generated at: $(date)" >> test-report.md
 
       - name: Archive Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: iris-test-report
           path: test-report.md
